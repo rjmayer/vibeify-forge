@@ -1,0 +1,14 @@
+{
+  "id": "greeting",
+  "name": "Greeting Template",
+  "description": "Simple greeting template with name variable",
+  "template": "Hello, {{name}}! Welcome to Vibeify Forge.",
+  "variables": [
+    {
+      "name": "name",
+      "type": "string",
+      "description": "The name to greet",
+      "required": true
+    }
+  ]
+}
