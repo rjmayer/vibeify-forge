@@ -9,7 +9,12 @@
     "type": "module"
   },
   "action": {
-    "default_popup": "src/popup/popup.html",
+    "default_popup": "popup.html",
     "default_title": "Vibeify Forge"
+  },
+  "icons": {
+    "16": "icon.svg",
+    "48": "icon.svg",
+    "128": "icon.svg"
   }
 }

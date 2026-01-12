@@ -1,6 +1,6 @@
 // Popup script with engine smoke test
 import { resolveTemplate, renderTemplate, deriveInputSchema } from '@vibeify/engine';
-import TemplateLoader from '../lib/template-loader';
+import TemplateLoader from './lib/template-loader';
 
 interface SmokeTestResult {
   success: boolean;

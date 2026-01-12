@@ -21,13 +21,7 @@ cd vibeify-forge
 npm install
 ```
 
-3. Build the @vibeify/engine dependency:
-```bash
-# The engine package needs to be built after installation from git
-cd node_modules/@vibeify/engine
-npm install && npm run build
-cd ../../..
-```
+Note: The postinstall script automatically builds the @vibeify/engine dependency.
 
 ### Build
 

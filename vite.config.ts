@@ -13,6 +13,10 @@ export default defineConfig({
         {
           src: 'prompts',
           dest: '.'
+        },
+        {
+          src: 'icon.svg',
+          dest: '.'
         }
       ]
     })
@@ -22,7 +26,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         background: resolve(__dirname, 'src/background.ts'),
-        popup: resolve(__dirname, 'src/popup/popup.html')
+        popup: resolve(__dirname, 'popup.html')
       },
       output: {
         entryFileNames: '[name].js',

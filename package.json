@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite build --watch --mode development",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "prepare-engine": "cd node_modules/@vibeify/engine && npm install && npm run build",
+    "postinstall": "npm run prepare-engine || true"
   },
   "dependencies": {
     "@vibeify/engine": "git+https://github.com/rjmayer/vibeify-engine.git"
