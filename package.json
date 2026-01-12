@@ -1,0 +1,23 @@
+{
+  "name": "vibeify-forge",
+  "version": "0.1.0",
+  "description": "Browser-based prompt design and library plugin",
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch --mode development",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prepare-engine": "cd node_modules/@vibeify/engine && npm install && npm run build",
+    "postinstall": "npm run prepare-engine || true"
+  },
+  "dependencies": {
+    "@vibeify/engine": "git+https://github.com/rjmayer/vibeify-engine.git"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.254",
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "vite-plugin-static-copy": "^1.0.0"
+  }
+}

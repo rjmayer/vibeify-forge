@@ -1,0 +1,13 @@
+metadata:
+  id: greeting
+  name: Greeting Template
+  description: Simple greeting template with name variable
+
+placeholders:
+  NAME:
+    type: string
+    description: The name to greet
+    required: true
+
+template:
+  content: "Hello, {{NAME}}! Welcome to Vibeify Forge."
