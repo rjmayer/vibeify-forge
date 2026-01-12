@@ -8,14 +8,14 @@
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "@vibeify/engine": "git+https://github.com/rjmayer/vibeify-engine.git"
+  },
   "devDependencies": {
     "@types/chrome": "^0.0.254",
     "@types/node": "^20.10.6",
     "typescript": "^5.3.3",
     "vite": "^5.0.10",
     "vite-plugin-static-copy": "^1.0.0"
-  },
-  "comments": {
-    "dependencies": "The @vibeify/engine package will be added once available at: git+https://github.com/placeholder/vibeify-engine.git"
   }
 }

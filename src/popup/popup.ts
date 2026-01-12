@@ -1,5 +1,5 @@
 // Popup script with engine smoke test
-import TemplateEngine from '../lib/engine-mock';
+import { resolveTemplate, renderTemplate, deriveInputSchema } from '@vibeify/engine';
 import TemplateLoader from '../lib/template-loader';
 
 interface SmokeTestResult {
@@ -10,55 +10,51 @@ interface SmokeTestResult {
 
 async function runSmokeTest(): Promise<SmokeTestResult> {
   try {
-    // Initialize the template loader and engine
+    // Initialize the template loader
     const loader = new TemplateLoader();
-    const engine = new TemplateEngine();
     
     // Load templates
     updateStatus('Loading templates...');
-    const templates = await loader.loadAllTemplates();
+    const templateRefs = await loader.loadAllTemplates();
     
-    if (templates.length === 0) {
+    if (templateRefs.length === 0) {
       return {
         success: false,
         message: 'No templates found'
       };
     }
     
-    updateStatus(`Loaded ${templates.length} template(s)`);
+    updateStatus(`Found ${templateRefs.length} template(s)`);
     
     // Test with the greeting template
-    const greetingTemplate = templates.find(t => t.id === 'greeting');
-    if (!greetingTemplate) {
-      return {
-        success: false,
-        message: 'Greeting template not found'
-      };
-    }
+    const greetingRef = '/prompts/templates/greeting.yaml';
+    updateStatus('Resolving greeting template...');
     
-    updateStatus('Testing greeting template...');
+    // Resolve template (handles inheritance and validation)
+    const resolved = await resolveTemplate(greetingRef, loader);
     
-    // Resolve template with sample input
-    const input = { name: 'World' };
-    const output = engine.resolve(greetingTemplate, input);
+    updateStatus('Deriving input schema...');
     
-    // Test validation
-    const isValid = engine.validate(greetingTemplate, input);
+    // Derive input schema from placeholders
+    const schema = deriveInputSchema(resolved);
     
-    if (!isValid) {
-      return {
-        success: false,
-        message: 'Template validation failed'
-      };
-    }
+    updateStatus('Rendering template...');
+    
+    // Render template with sample input
+    const input = { NAME: 'World' };
+    const output = renderTemplate(resolved, input);
     
     // Build comprehensive output
     let fullOutput = `✅ Smoke Test Passed!\n\n`;
-    fullOutput += `Templates loaded: ${templates.length}\n`;
-    fullOutput += `- ${templates.map(t => t.name).join('\n- ')}\n\n`;
+    fullOutput += `Templates available: ${templateRefs.length}\n`;
+    fullOutput += `- ${templateRefs.map(ref => ref.split('/').pop()).join('\n- ')}\n\n`;
     fullOutput += `Test: Greeting Template\n`;
+    fullOutput += `Template ID: ${resolved.metadata.id}\n`;
+    fullOutput += `Template Name: ${resolved.metadata.name}\n`;
+    fullOutput += `Placeholders: ${Object.keys(resolved.placeholders).join(', ')}\n`;
     fullOutput += `Input: ${JSON.stringify(input)}\n`;
     fullOutput += `Output: "${output}"\n`;
+    fullOutput += `\nSchema derived: ${Object.keys(schema.properties || {}).length} properties`;
     
     return {
       success: true,

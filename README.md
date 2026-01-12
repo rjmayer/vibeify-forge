@@ -21,6 +21,14 @@ cd vibeify-forge
 npm install
 ```
 
+3. Build the @vibeify/engine dependency:
+```bash
+# The engine package needs to be built after installation from git
+cd node_modules/@vibeify/engine
+npm install && npm run build
+cd ../../..
+```
+
 ### Build
 
 Build the extension for production:
@@ -64,12 +72,11 @@ vibeify-forge/
 │   │   ├── popup.html         # Popup UI
 │   │   └── popup.ts           # Popup logic with smoke test
 │   └── lib/
-│       ├── engine-mock.ts     # Mock template engine
-│       └── template-loader.ts # Template loader utility
+│       └── template-loader.ts # Template loader for @vibeify/engine
 ├── prompts/
-│   └── templates/             # Template library
-│       ├── greeting.json
-│       └── code-review.json
+│   └── templates/             # Template library (YAML format)
+│       ├── greeting.yaml
+│       └── code-review.yaml
 ├── manifest.json              # Chrome extension manifest (MV3)
 ├── vite.config.ts            # Vite build configuration
 └── tsconfig.json             # TypeScript configuration

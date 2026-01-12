@@ -1,37 +1,47 @@
-// Simple template loader
-import type { Template } from './engine-mock';
+// Template loader implementation for @vibeify/engine
+import type { TemplateLoader as ITemplateLoader } from '@vibeify/engine';
 
-export class TemplateLoader {
+/**
+ * Browser-based template loader that fetches templates via HTTP
+ */
+export class TemplateLoader implements ITemplateLoader {
   /**
-   * Load a template from the prompts/templates directory
+   * Load template source from URL
    */
-  async loadTemplate(templateId: string): Promise<Template> {
-    const response = await fetch(`/prompts/templates/${templateId}.json`);
+  async getTemplateSource(ref: string): Promise<string> {
+    const response = await fetch(ref);
     if (!response.ok) {
-      throw new Error(`Failed to load template: ${templateId}`);
+      throw new Error(`Failed to load template: ${ref}`);
     }
-    return await response.json();
+    return await response.text();
   }
 
   /**
-   * Load all templates from the templates directory
+   * Resolve a relative reference from a base reference
+   * For browser context, we use simple path resolution
    */
-  async loadAllTemplates(): Promise<Template[]> {
-    // For the smoke test, we'll load the two known templates
-    const templateIds = ['greeting', 'code-review'];
-    const templates: Template[] = [];
-    
-    for (const id of templateIds) {
-      try {
-        const template = await this.loadTemplate(id);
-        templates.push(template);
-      } catch (error) {
-        console.error(`Failed to load template ${id}:`, error);
-      }
+  resolveRef(from: string, to: string): string {
+    // If 'to' is already absolute (starts with / or http), return it
+    if (to.startsWith('/') || to.startsWith('http')) {
+      return to;
     }
     
-    return templates;
+    // Otherwise, resolve relative to the directory of 'from'
+    const fromDir = from.substring(0, from.lastIndexOf('/') + 1);
+    return fromDir + to;
+  }
+
+  /**
+   * Helper: Load all templates from the templates directory
+   */
+  async loadAllTemplates(): Promise<string[]> {
+    // For the smoke test, return the two known template references
+    return [
+      '/prompts/templates/greeting.yaml',
+      '/prompts/templates/code-review.yaml'
+    ];
   }
 }
 
 export default TemplateLoader;
+

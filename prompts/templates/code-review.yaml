@@ -1,0 +1,27 @@
+metadata:
+  id: code-review
+  name: Code Review Template
+  description: Template for code review prompts
+
+placeholders:
+  LANGUAGE:
+    type: string
+    description: Programming language
+    required: true
+  CODE:
+    type: string
+    description: Code to review
+    required: true
+  FOCUS_AREAS:
+    type: string
+    description: Areas to focus on during review
+    required: false
+    default: "security, performance, and maintainability"
+
+template:
+  content: |
+    Please review the following {{LANGUAGE}} code:
+
+    {{CODE}}
+
+    Focus on: {{FOCUS_AREAS}}
