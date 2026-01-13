@@ -2,13 +2,17 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
+const target = process.env.TARGET ?? 'chrome';
+const manifestSrc = target === 'firefox' ? 'manifest.firefox.json' : 'manifest.json';
+
 export default defineConfig({
   plugins: [
     viteStaticCopy({
       targets: [
         {
-          src: 'manifest.json',
-          dest: '.'
+          src: manifestSrc,
+          dest: '.',
+          rename: 'manifest.json'
         },
         {
           src: 'prompts',

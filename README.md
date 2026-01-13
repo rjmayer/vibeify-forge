@@ -30,6 +30,11 @@ Build the extension for production:
 npm run build
 ```
 
+Build a Firefox-compatible bundle (uses the MV2-style manifest):
+```bash
+TARGET=firefox npm run build
+```
+
 The built extension will be in the `dist/` directory.
 
 ### Development Mode
@@ -47,6 +52,13 @@ npm run dev
 4. Click "Load unpacked"
 5. Select the `dist` directory from the project
 
+## Loading the Extension in Firefox
+
+1. Build the extension with the Firefox target (see above)
+2. Open Firefox and navigate to `about:debugging#/runtime/this-firefox`
+3. Click "Load Temporary Add-on"
+4. Select the `manifest.json` file inside the `dist` directory
+
 ## Testing
 
 Once loaded:
@@ -62,18 +74,18 @@ Once loaded:
 vibeify-forge/
 ├── src/
 │   ├── background.ts          # Background service worker
-│   ├── popup/
-│   │   ├── popup.html         # Popup UI
-│   │   └── popup.ts           # Popup logic with smoke test
+│   ├── popup.ts               # Popup logic with smoke test
 │   └── lib/
 │       └── template-loader.ts # Template loader for @vibeify/engine
 ├── prompts/
 │   └── templates/             # Template library (YAML format)
 │       ├── greeting.yaml
 │       └── code-review.yaml
-├── manifest.json              # Chrome extension manifest (MV3)
-├── vite.config.ts            # Vite build configuration
-└── tsconfig.json             # TypeScript configuration
+├── popup.html                 # Popup UI
+├── manifest.json              # Chrome manifest (MV3)
+├── manifest.firefox.json      # Firefox manifest (MV2-style background)
+├── vite.config.ts             # Vite build configuration
+└── tsconfig.json              # TypeScript configuration
 ```
 
 ## License

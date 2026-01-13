@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Vibeify Forge",
+  "version": "0.1.0",
+  "description": "Browser-based prompt design and library plugin",
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Vibeify Forge"
+  },
+  "icons": {
+    "16": "icon.svg",
+    "48": "icon.svg",
+    "128": "icon.svg"
+  }
+}
