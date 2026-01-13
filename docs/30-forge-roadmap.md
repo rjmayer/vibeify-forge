@@ -1,286 +1,235 @@
-Alright. Here’s a **clean, architecture-conformant MVP roadmap** for **Vibeify Forge**, written as if the **MVP Proposal** and **Architecture Brief** were the only inputs. No legacy baggage, no references to anything that came before.
+# Vibeify Forge — MVP Project Roadmap
+
+## 1. Overview
+
+**Vibeify Forge** is a browser-based plugin that enables users to design, preview, and reuse structured prompt templates directly alongside ChatGPT.
+This roadmap outlines the phases, milestones, dependencies, and success criteria required to bring the MVP from concept to public release while preserving the core design goals:
+
+* Low friction
+* Deterministic behaviour
+* Offline-first trust
+* No forced workflows or accounts
+
+The roadmap is intentionally conservative to avoid over-engineering and to preserve momentum.
 
 ---
 
-# Vibeify Forge — MVP Roadmap
+## 2. Roadmap at a Glance
 
-*Architecture-Aligned, Deterministic, Offline-First*
+| Phase | Name                      | Duration | Outcome                                  |
+| ----- | ------------------------- | -------- | ---------------------------------------- |
+| 1     | Foundation                | 2 weeks  | Stable core engine + extension skeleton  |
+| 2     | Core MVP Functionality    | 4 weeks  | Usable prompt designer with live preview |
+| 3     | Integration & Reliability | 2 weeks  | Robust ChatGPT interaction + persistence |
+| 4     | Polish & Release Prep     | 2 weeks  | Store-ready MVP                          |
 
----
-
-## 1. Roadmap Intent
-
-This roadmap defines the concrete delivery plan for the **Vibeify Forge MVP**, strictly aligned with the locked architecture:
-
-* deterministic prompt rendering
-* offline-first trust model
-* strict engine / extension separation
-* minimal, stable contracts
-* no accounts, no backend, no silent behaviour
-
-The roadmap prioritises **architectural correctness over feature velocity**. Any milestone that would violate boundaries is explicitly excluded.
+**Total Estimated Timeline:** ~10 weeks (including buffer)
 
 ---
 
-## 2. Phased Delivery Overview
+## 3. Phase 1 — Foundation
 
-| Phase | Name                          | Outcome                                 |
-| ----: | ----------------------------- | --------------------------------------- |
-|     0 | Repo & Guardrails             | Enforced architectural boundaries       |
-|     1 | Shared Engine v0.1            | Pure, testable prompt engine            |
-|     2 | Extension Skeleton            | Browser shell wired to engine           |
-|     3 | Prompt Design Core            | Template → Form → Preview loop          |
-|     4 | Local Library & Persistence   | IndexedDB-backed templates & snapshots  |
-|     5 | ChatGPT Adapter Integration   | Copy / Insert with fail-soft guarantees |
-|     6 | Hardening & Release Readiness | Store-ready, trust-preserving MVP       |
+**Goal:** Establish a solid technical base without UI or feature creep.
 
----
+### Milestones
 
-## 3. Phase 0 — Repo & Architectural Guardrails
+| Milestone              | Deliverable                                          | Dependencies      |
+| ---------------------- | ---------------------------------------------------- | ----------------- |
+| Engine extraction      | `vibeify-engine` (TypeScript) isolated and buildable | None              |
+| Template model         | Canonical template + placeholder model               | Engine extraction |
+| Deterministic renderer | Pure render function (inputs → prompt text)          | Template model    |
+| Extension shell        | Browser extension loads, panel renders               | None              |
+| Build pipeline         | Vite + linting + formatting                          | Extension shell   |
 
-**Goal:** Make it hard to accidentally violate the architecture.
+### Key Deliverables
 
-### Deliverables
+* Shared TypeScript engine (no browser dependencies)
+* Deterministic prompt renderer
+* Empty but functional side-panel UI
 
-* Monorepo with enforced package boundaries:
+### Resources
 
-  ```
-  packages/
-    engine/
-    extension/
-  ```
-* Shared tooling (TypeScript config, linting, formatting)
-* CI checks preventing:
+* TypeScript
+* Vite
+* Minimal React scaffold
+* WebExtension API
 
-  * engine importing browser / DOM APIs
-  * circular dependencies
-* Architecture README pinned at repo root
+### Risks & Mitigation
 
-### Exit Criteria
+| Risk                    | Mitigation                                  |
+| ----------------------- | ------------------------------------------- |
+| Over-abstracting engine | Keep API surface minimal; no plugins        |
+| Browser API friction    | Target Chrome first, abstract Firefox later |
 
-* Engine can be built and tested independently
-* Extension cannot compile if it imports forbidden engine internals
-* Boundaries are mechanically enforced, not “by convention”
+### Success Metrics
 
----
-
-## 4. Phase 1 — Shared Engine v0.1
-
-**Goal:** Ship a boring, deterministic, reusable prompt engine.
-
-### Scope (Engine Only)
-
-**Must implement:**
-
-* Template parsing
-* Placeholder metadata model
-* Input validation
-* Deterministic rendering
-* Snapshot creation
-* Engine-owned types and error models
-
-**Must not implement:**
-
-* Defaults injection
-* UI concepts
-* Storage
-* Browser APIs
-* Any form of execution logic
-
-### Deliverables
-
-* `parseTemplate(source)`
-* `deriveFormSpec(template)`
-* `validateInput(template, input)`
-* `render(template, input)`
-* `createSnapshot(...)`
-* Full unit test suite:
-
-  * determinism tests
-  * golden render tests
-  * validation matrix tests
-
-### Exit Criteria
-
-* Same input → same output, always
-* Engine usable from Node without modification
-* 100% of prompt rendering logic lives in the engine
+* Engine can render a prompt deterministically from fixtures
+* Extension loads without errors in Chrome
 
 ---
 
-## 5. Phase 2 — Extension Skeleton
+## 4. Phase 2 — Core MVP Functionality
 
-**Goal:** Establish the browser shell without adding logic prematurely.
+**Goal:** Make Forge genuinely useful for prompt creation and reuse.
 
-### Deliverables
+### Milestones
 
-* WebExtension scaffold (Chrome first)
-* Side-panel UI loads reliably
-* Engine imported and callable
-* No persistence yet
-* No ChatGPT interaction yet
+| Milestone             | Deliverable                                | Dependencies    |
+| --------------------- | ------------------------------------------ | --------------- |
+| Template-driven forms | Auto-generated form from template metadata | Engine          |
+| Live preview          | Real-time rendered prompt                  | Form system     |
+| Local library         | Save/edit/delete templates locally         | Browser storage |
+| Snapshot model        | Rendered prompt + inputs captured          | Live preview    |
+| Basic UX flow         | End-to-end happy path                      | All above       |
 
-### Architectural Constraints
+### Key Deliverables
 
-* Extension orchestrates engine calls
-* Engine remains the single source of truth for prompt logic
-* UI is allowed to be visually minimal at this stage
+* Form generation from template placeholders
+* Live, side-by-side prompt preview
+* Local prompt/template persistence (IndexedDB)
 
-### Exit Criteria
+### Resources
 
-* Side panel loads on supported pages
-* Engine functions can be called from the extension
-* No engine code duplicated in the extension
+* React state management
+* Browser storage APIs
+* Engine renderer
 
----
+### Risks & Mitigation
 
-## 6. Phase 3 — Prompt Design Core (Happy Path)
+| Risk                      | Mitigation                                      |
+| ------------------------- | ----------------------------------------------- |
+| Form complexity explosion | Limit v1 placeholder types (string, list, enum) |
+| Confusing UX              | Always show raw rendered prompt                 |
 
-**Goal:** Enable the core loop: *Template → Inputs → Preview*.
+### Success Metrics
 
-### Deliverables
-
-* Template selection (hardcoded examples initially)
-* Form auto-generated from engine `FormSpec`
-* Live validation feedback
-* Live rendered preview
-* Strict invariant:
-
-  > Preview text == text that will be copied/inserted
-
-### Explicit Non-Goals
-
-* No template inheritance UI
-* No AI assistance
-* No execution history
-* No “smart defaults” injected silently
-
-### Exit Criteria
-
-* User can fill inputs and see a deterministic preview
-* Validation errors are field-level and explicit
-* No mutation of prompt text outside the engine
+* User can create → preview → save → reopen a prompt
+* Zero hidden AI behaviour (preview matches execution)
 
 ---
 
-## 7. Phase 4 — Local Library & Persistence
+## 5. Phase 3 — Integration & Reliability
 
-**Goal:** Make prompts reusable without introducing trust risk.
+**Goal:** Make Forge feel native to the ChatGPT workflow.
 
-### Deliverables
+### Milestones
 
-* IndexedDB schema v1:
+| Milestone           | Deliverable                            | Dependencies      |
+| ------------------- | -------------------------------------- | ----------------- |
+| Insert into ChatGPT | Inject rendered prompt into chat input | Browser APIs      |
+| Copy workflows      | One-click copy prompt                  | Snapshot model    |
+| Error handling      | Validation + user-visible errors       | All core features |
+| Template management | Rename, duplicate, delete              | Local library     |
+| Storage hardening   | Migration-safe local storage           | Library           |
 
-  * templates
-  * snapshots
-  * settings
-* Versioned migration framework
-* Save / load templates
-* Save snapshots (inputs + rendered text)
-* Export capability (engine-portable)
+### Key Deliverables
 
-### Architectural Invariants
+* Seamless ChatGPT interaction
+* Predictable failure modes
+* Stable persistence layer
 
-* Rendered text is stored verbatim
-* Snapshots remain usable even if templates break later
-* No cascading deletes
-* No cloud sync
+### Resources
 
-### Exit Criteria
+* DOM injection logic
+* Defensive validation
+* Manual QA passes
 
-* Data survives reloads and extension updates
-* Migration code exists from day one
-* User can export everything without hidden state
+### Risks & Mitigation
 
----
+| Risk                | Mitigation                         |
+| ------------------- | ---------------------------------- |
+| ChatGPT DOM changes | Isolate selectors, fail gracefully |
+| Data loss           | Version storage schema early       |
 
-## 8. Phase 5 — ChatGPT Adapter Integration
+### Success Metrics
 
-**Goal:** Integrate with ChatGPT without becoming fragile or invasive.
-
-### Deliverables
-
-* Isolated ChatGPT adapter module
-* Capability detection (`canInsert`, `canFocus`)
-* Copy action (always available)
-* Insert action (best-effort)
-* Fail-soft behaviour:
-
-  * Copy still works if Insert fails
-
-### Explicit Constraints
-
-* No DOM scraping beyond composer detection
-* No reading conversation content
-* No auto-send
-* No undocumented APIs
-
-### Exit Criteria
-
-* Insert works on supported ChatGPT UI
-* Clear user feedback when insertion is unavailable
-* Adapter is the only place touching DOM selectors
+* Prompt insertion works reliably
+* No silent failures or corrupted data
 
 ---
 
-## 9. Phase 6 — Hardening & Release Readiness
+## 6. Phase 4 — Polish & Release Preparation
 
-**Goal:** Ship a trustworthy MVP, not a fragile demo.
+**Goal:** Make the MVP presentable, trustworthy, and shippable.
 
-### Deliverables
+### Milestones
 
-* UX polish (clarity > beauty)
-* Human-readable error messages
-* Manual QA checklist completed
-* Store assets (description, screenshots)
-* Versioned release build
-* Changelog with trust disclosures
+| Milestone           | Deliverable                     | Dependencies     |
+| ------------------- | ------------------------------- | ---------------- |
+| UX refinement       | Spacing, copy, visual hierarchy | Core MVP         |
+| Validation feedback | Inline, human-readable errors   | Error handling   |
+| Documentation       | README + onboarding copy        | Feature complete |
+| Store packaging     | Chrome Web Store assets         | Stable build     |
+| Release candidate   | Tagged MVP build                | All above        |
 
-### Pre-Release Gate (All Must Pass)
+### Key Deliverables
 
-* Engine determinism tests green
-* Storage migration tested on non-empty DB
-* Copy works even if Insert fails
-* No new permissions introduced accidentally
-* Export/import round-trips cleanly
+* Clean, restrained UI
+* Clear user guidance
+* Store-ready extension package
 
-### Exit Criteria
+### Resources
+
+* Copywriting
+* Minimal branding
+* Store submission checklists
+
+### Risks & Mitigation
+
+| Risk           | Mitigation           |
+| -------------- | -------------------- |
+| Over-polishing | Timebox UX tweaks    |
+| Scope creep    | Hard freeze after RC |
+
+### Success Metrics
 
 * Extension approved by store
-* New user succeeds without explanation
-* Trust claims are technically true
+* New user can succeed without explanation
 
 ---
 
-## 10. Explicitly Out of Scope for MVP
+## 7. Dependencies Summary
 
-These are *intentionally excluded* despite being obvious future ideas:
+* **Critical Path:** Engine → Forms → Preview → Storage → ChatGPT integration
+* **Non-blocking:** Firefox support, WASM portability, sync features
+* **Explicitly Out of Scope (MVP):**
 
-* Accounts or authentication
-* Cloud sync
-* Prompt marketplaces
-* AI-assisted prompt generation
-* Template inheritance UI
-* Execution analytics
-* Codaira integration
-
-Each of these requires a **new trust contract** and therefore a post-MVP phase.
+  * Accounts
+  * Cloud sync
+  * Marketplaces
+  * AI-assisted prompt generation
 
 ---
 
-## 11. MVP Definition of “Done”
+## 8. Resource Assumptions
 
-The MVP is complete when:
+* 1 primary developer
+* Occasional design/UX input
+* No backend infrastructure
+* No accounts or auth
 
-* Prompt rendering is deterministic and transparent
-* Engine is reusable outside the extension
-* Data is local, durable, and exportable
-* ChatGPT integration is helpful but non-essential
-* The system is easy to explain **without caveats**
+---
 
-Or, in Forge terms:
+## 9. Risk Register (High-Impact Only)
 
-> *If it ever feels like the system is doing something behind the user’s back, it’s not ready to ship.*
+| Risk                    | Impact     | Mitigation                    |
+| ----------------------- | ---------- | ----------------------------- |
+| Over-engineering        | Delays MVP | Ruthless scope discipline     |
+| ChatGPT UI changes      | Breakage   | Fail-soft design              |
+| Feature envy (V2 ideas) | Focus loss | Park in “Future Enhancements” |
+
+---
+
+## 10. MVP Success Criteria (Go / No-Go)
+
+The MVP is **successful** if:
+
+* Users can **design once and reuse prompts effortlessly**
+* Rendered prompts are **fully deterministic**
+* The tool feels **invisible, not heavy**
+* Users trust it without accounts or cloud storage
+
+If those are met, Forge is ready to act as the **entry point** into the wider Vibeify / Codaira ecosystem.
 
 ---
 
